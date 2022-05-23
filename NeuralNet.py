@@ -54,9 +54,8 @@ class NeuralNet:
             self.weights[i] -= dw * learning_rate
             db = self.deltas[i]
             self.biases[i] -= db * learning_rate
-            # print(f"\n\n{db}\n\n")
 
-    def train(self, x, y, learning_rate=0.005, iters=100, tol=0.05):
+    def train(self, x, y, learning_rate=0.005, iters=100, tol=0.005):
         labels = np.zeros((len(y), 10))
         for i in range(len(y)):
             labels[i, y[i]] = 1
@@ -68,12 +67,13 @@ class NeuralNet:
             print(cost)
             if abs(cost - prev_cost) < tol:
                 break
+            prev_cost = cost
             print(c)
 
-        rnd_sample = random.sample(range(y.shape[0]), 100)
-        for idx in rnd_sample:
-            self.forward_prop(x[idx, :].reshape(1, 784))
-            print(self.activations[-1], y[idx])
+        # rnd_sample = random.sample(range(y.shape[0]), 100)
+        # for idx in rnd_sample:
+            # self.forward_prop(x[idx, :].reshape(1, 784))
+            # print(self.activations[-1], y[idx])
 
     def predict(self, x):
         self.forward_prop(x)

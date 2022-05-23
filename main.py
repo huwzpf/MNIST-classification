@@ -39,7 +39,7 @@ train_args = load_training_images('D:/Projects/Data/train-images-idx3-ubyte.gz')
 train_labels = load_training_labels('D:/Projects/Data/train-labels-idx1-ubyte.gz')
 test_args = load_training_images('D:/Projects/Data/t10k-images-idx3-ubyte.gz')
 test_labels = load_training_labels('D:/Projects/Data/t10k-labels-idx1-ubyte.gz')
-n = NeuralNet([15, 10], 784)
+n = NeuralNet([800, 10], 784)
 x = copy.copy(train_args.reshape(train_args.shape[0], -1)).astype(np.float64)
 x /= (255/2)
 x -= 1
@@ -55,5 +55,7 @@ for i in range(len(test_labels)):
     prediction = n.predict(x_test[i, :].reshape(1, 784))
     if prediction == test_labels[i]:
         count += 1
-
+print("tests")
 print(count/len(test_labels))
+
+# todo - inicjalizacja , róźne activation functions (+ relu)
