@@ -1,79 +1,127 @@
 import random
-
+from enum import Enum
 import numpy as np
 
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-def sigmoid_derivative(x):
-    return sigmoid(x) * (1 - sigmoid(x))
-
 class NeuralNet:
-    def __init__(self, layers_layout, input_size):
-        self.weights = []
-        self.biases = []
-        self.z = []
-        self.activations = []
+    @staticmethod
+    def sigmoid(x):
+        return 1 / (1 + np.exp(-x))
+
+    @staticmethod
+    def sigmoid_derivative(x):
+        return NeuralNet.sigmoid(x) * (1 - NeuralNet.sigmoid(x))
+
+    @staticmethod
+    def relu(x):
+        return x * (x > 0)
+
+    @staticmethod
+    def relu_derivative(x):
+        return x > 0
+
+    @staticmethod
+    def logistic_loss(h, y):
+        return y * np.log(h) + (1 - y) * np.log(1 - h)
+
+    class ActivationType(Enum):
+        RELU = 0,
+        SIGMOID = 1
+
+    def __init__(self, input_size, layers_layout, output_size, activation_functions=None):
+
+        layers_layout.append(output_size)
         self.layers_count = len(layers_layout)
-        self.deltas = [0 for _ in range(self.layers_count)]
+
+        self.k = output_size
+
+        if activation_functions is None:
+            self.activation_functions = [NeuralNet.ActivationType.SIGMOID for _ in range(self.layers_count)]
+        else:
+            if len(activation_functions) != self.layers_count:
+                raise IndexError("incorrect size")
+            self.activation_functions = activation_functions
+
+        self.z = [np.empty(1) for _ in range(self.layers_count)]
+        self.activations = [np.empty(1) for _ in range(self.layers_count)]
+        self.biases = [np.zeros((1, layer_size)) for layer_size in layers_layout]
+        self.weights = []
+
+        self.initialize_weights(input_size, layers_layout)
+
+    def initialize_weights(self, input_size, layers_layout):
         prev_layer_size = input_size
         for layer_size in layers_layout:
-            self.weights.append(np.random.rand(prev_layer_size, layer_size)- 0.5)
-            self.biases.append(np.zeros((1, layer_size)))
-            self.z.append(np.zeros((layer_size, 1)))
-            self.activations.append(np.zeros((layer_size, 1)))
+            self.weights.append(np.random.randn(prev_layer_size, layer_size) * np.sqrt(1/prev_layer_size))
             prev_layer_size = layer_size
 
-    def cost_function(self, x, y):
-        y_hat = self.predict(x)
-        costs = sum(y == y_hat) / len(y_hat)
-        return costs
+    def activation(self, x, layer):
+        if self.activation_functions[layer] == NeuralNet.ActivationType.RELU:
+            return self.relu(x)
+        else:
+            return self.sigmoid(x)
 
+    def activation_derivative(self, x, layer):
+        if self.activation_functions[layer] == NeuralNet.ActivationType.RELU:
+            return self.relu_derivative(x)
+        else:
+            return self.sigmoid_derivative(x)
+
+    def cost_function(self, x, y, reg_param):
+        # lambda/2 * sum of squares of all weights - l2 regularization
+        rt = (reg_param / 2) * sum(np.sum(np.square(a)) for a in self.weights)
+        self.forward_prop(x)
+        # sum of logistic losses for all outputs
+        cost = sum([NeuralNet.logistic_loss(a, b) for a, b in zip(np.nditer(self.activations[-1]), np.nditer(y))])
+        return (-cost + rt)/y.shape[0]
 
     def forward_prop(self, x):
         self.z[0] = x.dot(self.weights[0]) + self.biases[0]
-        self.activations[0] = sigmoid(self.z[0])
+        self.activations[0] = self.activation(self.z[0], 0)
         for i in range(1, self.layers_count):
             self.z[i] = self.activations[i-1].dot(self.weights[i]) + self.biases[i]
-            self.activations[i] = sigmoid(self.z[i])
+            self.activations[i] = self.activation(self.z[i], i)
 
-    def backprop(self, y):
-        self.deltas[-1] = self.activations[-1] - y
-        for i in range(self.layers_count-2, -1, -1):
-            self.deltas[i] = np.transpose(self.weights[i+1].dot(np.transpose(self.deltas[i+1])))
-            self.deltas[i] = np.multiply(self.deltas[i], sigmoid_derivative(self.z[i]))
-
-    def train_batch(self, x, y, learning_rate):
+    def train_batch(self, x, y, learning_rate, reg_param, batch_size):
         self.forward_prop(x)
-        self.backprop(y)
-        self.weights[0] -= np.transpose(x).dot(self.deltas[0]) * learning_rate
-        self.biases[0] -= self.deltas[0] * learning_rate
-        for i in range(1, self.layers_count):
-            dw = np.transpose(self.activations[i-1]).dot(self.deltas[i])
-            self.weights[i] -= dw * learning_rate
-            db = self.deltas[i]
-            self.biases[i] -= db * learning_rate
 
-    def train(self, x, y, learning_rate=0.005, iters=100, tol=0.005):
+        deltas = [0 for _ in range(self.layers_count)]
+        deltas[-1] = self.activations[-1] - y
+        for i in range(self.layers_count - 2, -1, -1):
+            deltas[i] = np.transpose(self.weights[i + 1].dot(np.transpose(deltas[i + 1])))
+            deltas[i] = np.multiply(deltas[i], self.activation_derivative(self.z[i], i))
+        #                                                    l2 regularization
+        self.weights[0] -= (np.transpose(x).dot(deltas[0]) + reg_param * self.weights[0] * batch_size)\
+                           * learning_rate/batch_size
+        self.biases[0] -= np.sum(deltas[0], axis=0).reshape(self.biases[0].shape) * learning_rate/batch_size
+        for i in range(1, self.layers_count):
+            #                                                        l2 regularization
+            dw = np.transpose(self.activations[i-1]).dot(deltas[i]) + reg_param * self.weights[i] * batch_size
+            self.weights[i] -= dw * learning_rate/batch_size
+            db = np.sum(deltas[i], axis=0).reshape(self.biases[i].shape)
+            self.biases[i] -= db * learning_rate/batch_size
+
+    def train(self, x, y, learning_rate=0.005, iters=100, tol=0.005, reg_param=0.1, batch_size=10):
         labels = np.zeros((len(y), 10))
         for i in range(len(y)):
             labels[i, y[i]] = 1
-        prev_cost = self.cost_function(x, y)
+        prev_cost = self.cost_function(x, labels, reg_param)
+        print(f"cost before: {prev_cost}")
         for c in range(iters):
             for i in range(0, y.shape[0]):
-                self.train_batch(x[i, :].reshape(1, 784), labels[i, :].reshape(1, 10), learning_rate)
-            cost = self.cost_function(x, y)
-            print(cost)
+                if i + batch_size < y.shape[0]:
+                    self.train_batch(x[i:i+batch_size, :], labels[i:i+batch_size, :],
+                                     learning_rate, reg_param, batch_size)
+                else:
+                    self.train_batch(x[i:, :].reshape(y.shape[0] - i, 784),
+                                     labels[i:, :].reshape(y.shape[0] - i,  self.k),
+                                     learning_rate, reg_param, y.shape[0] - i)
+
+            cost = self.cost_function(x, labels, reg_param)
+            print(f"cost in {c} iteration : {cost}")
             if abs(cost - prev_cost) < tol:
                 break
             prev_cost = cost
-            print(c)
-
-        # rnd_sample = random.sample(range(y.shape[0]), 100)
-        # for idx in rnd_sample:
-            # self.forward_prop(x[idx, :].reshape(1, 784))
-            # print(self.activations[-1], y[idx])
 
     def predict(self, x):
         self.forward_prop(x)
