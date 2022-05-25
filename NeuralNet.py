@@ -1,9 +1,9 @@
-import random
+from GradientBasedAlgorithm import GradientBasedAlgorithm
 from enum import Enum
 import numpy as np
 
 
-class NeuralNet:
+class NeuralNet(GradientBasedAlgorithm):
     @staticmethod
     def sigmoid(x):
         return 1 / (1 + np.exp(-x))
@@ -85,6 +85,7 @@ class NeuralNet:
     def train_batch(self, x, y, learning_rate, reg_param, batch_size):
         self.forward_prop(x)
 
+        # backpropagation algorithm
         deltas = [0 for _ in range(self.layers_count)]
         deltas[-1] = self.activations[-1] - y
         for i in range(self.layers_count - 2, -1, -1):
@@ -100,28 +101,6 @@ class NeuralNet:
             self.weights[i] -= dw * learning_rate/batch_size
             db = np.sum(deltas[i], axis=0).reshape(self.biases[i].shape)
             self.biases[i] -= db * learning_rate/batch_size
-
-    def train(self, x, y, learning_rate=0.005, iters=100, tol=0.005, reg_param=0.1, batch_size=10):
-        labels = np.zeros((len(y), 10))
-        for i in range(len(y)):
-            labels[i, y[i]] = 1
-        prev_cost = self.cost_function(x, labels, reg_param)
-        print(f"cost before: {prev_cost}")
-        for c in range(iters):
-            for i in range(0, y.shape[0]):
-                if i + batch_size < y.shape[0]:
-                    self.train_batch(x[i:i+batch_size, :], labels[i:i+batch_size, :],
-                                     learning_rate, reg_param, batch_size)
-                else:
-                    self.train_batch(x[i:, :].reshape(y.shape[0] - i, 784),
-                                     labels[i:, :].reshape(y.shape[0] - i,  self.k),
-                                     learning_rate, reg_param, y.shape[0] - i)
-
-            cost = self.cost_function(x, labels, reg_param)
-            print(f"cost in {c} iteration : {cost}")
-            if abs(cost - prev_cost) < tol:
-                break
-            prev_cost = cost
 
     def predict(self, x):
         self.forward_prop(x)
