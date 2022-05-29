@@ -1,6 +1,7 @@
 from GradientBasedAlgorithm import GradientBasedAlgorithm
 from enum import Enum
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class NeuralNet(GradientBasedAlgorithm):
@@ -105,3 +106,16 @@ class NeuralNet(GradientBasedAlgorithm):
     def predict(self, x):
         self.forward_prop(x)
         return np.argmax(self.activations[-1], axis=1)
+
+    def plot_layer(self, layer):
+        w = self.weights[0]
+        for i in range(1, layer):
+            w = w.dot(self.weights[i])
+
+        for i in range(self.weights[layer].shape[1]):
+            t_size = int(np.sqrt(self.weights[0].shape[0]))
+            p = w[:, i].reshape(t_size, t_size)
+            plt.imshow(p, cmap='hot', interpolation='nearest')
+            plt.title(f"weights for {i} node, {layer} layer")
+            plt.show()
+

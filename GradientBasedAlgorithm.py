@@ -14,7 +14,7 @@ class GradientBasedAlgorithm(ABC):
     def predict(self, x):
         pass
 
-    def train(self, x, y, learning_rate=0.005, iters=100, tol=0.005, reg_param=0.1, batch_size=10):
+    def train(self, x, y, learning_rate=0.005, iters=100, tol=0.005, reg_param=0.001, batch_size=10):
         prev_cost = self.cost_function(x, y, reg_param)
         print(f"starting training, cost before: {prev_cost}")
         for c in range(iters):
