@@ -1,0 +1,1209 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{Opis i porównanie wybranych algorytmów uczenia maszynowego na przykładzie klasyfikacji cyfr pisanych odręcznie}
+    \author{Piotr Sieński 184297, Sebastian Leśniewski 184711}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \hypertarget{wstux119p}{%
+\section{Wstęp}\label{wstux119p}}
+
+Problemem, który staraliśmy się rozwiązać przy pomocy Sztucznej
+Inteligencji było rozpoznawanie ręcznie pisanych cyfr. W tym celu
+skorzystaliśmy z data setu MINST, który oferował 60,000 przykładów
+treningowych oraz 10,000 przykładów testowych.Pliki zawarte w data secie
+to monochromatyczne cyfry o rozmiarach 28x28 pikseli, gdzie na każdy
+piksel przypada jeden bajt informacji o kolorze (0-255) co daje około
+55MB danych nie wliczając etykiet. Wartości pikseli są w dalszym etapie
+jednak normalizowane i przyjmują wartości -1 dla dolnej połowy zakresu i
+1 dla górnej połowy zakresu.Do realizacji zadania zastosowaliśmy trzy
+metody: SVM,Sieć Neuronowa oraz SoftMax Regression i w dalszej części
+sprawozdania opisane zostały matematyczne podstawy działania tych metod
+i wyniki zastosowania ich do problemu klasyfikacji.
+
+\hypertarget{opisy-i-wyniki-dziaux142ania-metod}{%
+\section{Opisy i wyniki działania
+metod}\label{opisy-i-wyniki-dziaux142ania-metod}}
+
+\hypertarget{svm}{%
+\subsection{SVM}\label{svm}}
+
+\hypertarget{opis-algorytmu-svm}{%
+\subsubsection{Opis algorytmu SVM}\label{opis-algorytmu-svm}}
+
+Celem algorytmu SVM jest znalezienie takich parametrów \(w , b\), na
+podstawie których algorytm będzie poprawnie klasyfikował binarnie dane
+według funkcji decyzyjnej \(h(x) = wx+b\) z jak największym marginesem
+od powierzchni decyzyjnej, margines ten dla \(i\)-tego elementu wektora
+danych można zdefiniować jako
+\[ \gamma^{(i)} = y^{(i)} (w^Tx^{(i)} + b)  \tag{1} \] i margines dla
+całego zestawu danych jako \[ 
+\gamma = min \ \gamma^{(i)} 
+\] Cel optymalizacji można sformułować więc jako \[ max \ \gamma \] pod
+warunkiem \[ \forall_{i} \gamma^{(i)} \ge \gamma \] Należy wziąć również
+pod uwagę, że w sformułowanym powyżej problemie zwiększenie \(w\) i
+\(b\) o stałą zwiększałoby również margines, czemu zaradzić można
+poprzez maksymalizowanie marginesu podzielonego przez normę wekotra
+\(w\), dzięki temu możemy dowolnie zmieniać \(w, b\) (więc również
+ustalić dowolną poszukiwana wartość \(\gamma\)), co prowadzi do
+kolejnego uproszczenia problemu poprzez ustawienie \(\gamma = 1\).
+Otrzymujemy więc:
+\[ max \ \frac{1}{||w||} \ \Leftrightarrow  min \ \frac{1}{2} ||w||^2 \tag{2} \]
+pod warunkiem \[ \forall_{i} \gamma^{(i)} \ge 1 \tag{3} \]
+
+Na podstawie {[}1{]} \(w\) można przedstawić jako kombinację liniową
+\(w =\sum^{i}\alpha_i y_i x_i\) pod warunkiem
+\(\sum^i \alpha_i y_i = 0\), więc cel optymalizacji można przepisać
+jako:
+\[ min \  \frac{1}{2} \sum^N_{i=1}\sum^N_{j=1}y_i y_j (x_i \cdot x_j) \alpha_i \alpha_j - \sum^N_{i=1}\alpha_i \tag{4} \]
+pod warunkiem
+\[ \forall_i \alpha_i \ge0 \ , \quad \sum^N_{i=1}y_i\alpha_i = 0 \tag{5}  \]
+
+W celu umożliwienia algorytmowi radzenie sobie z danymi których nie da
+się odseparować wprowadzane jest kolejne ograniczenie na \(\alpha\),
+\[ \alpha \le C \] gdzie \(C\) jest parametrem umożliwiającym nie
+poprawną klasyfikację przypadków w celu osiągnięcia poprawnego
+marginesu.
+
+Chcąc uzyskać nieliniowe powierzchnie decyzyjne można użyć funkcji
+jądrowych (kernel functions) mierzących podobieństwo / dystans między
+dwoma wektorami cech. Funkcje jądrowe efektywnie realizują podniesienie
+wymiarowości danych wejściowych bez konieczności robienia tego
+explicite. Finalnie cel optymalizacji wygląda następująco :
+\[ min \  \frac{1}{2} \sum^N_{i=1}\sum^N_{j=1}y_i y_j K(x_i , x_j) \alpha_i \alpha_j - \sum^N_{i=1}\alpha_i \tag{6} \]
+pod warunkiem
+\[ \forall_i \ 0 \le \alpha_i \le C \ , \quad \sum^N_{i=1}y_i\alpha_i = 0 \tag{7} \]
+gdzie K jest funkcją jądrową.
+
+A funkcję decyzyjną można sformułować jako : \[
+h(x) = \sum^N_{i=1}y_i\alpha_i K(x_i, x) + b \tag{8}
+\]
+
+W oparciu o {[}2{]} można stwierdzić, że problem optymalizacyjny jest
+rozwiązany wtedy, gdy spełnione są Warunki Karusha--Kuhna--Tuckera (KKT)
+dla każdego \(\alpha\). Warnuki KKT dla tego problemu to :
+\[ \alpha_i = 0 \Leftrightarrow y_i h(x_i) \ge 1 \]
+\[ 0 < \alpha_i < C \Leftrightarrow y_i h(x_i)= 1 \]
+\[ \alpha_i = C \Leftrightarrow  y_i h(x_i) \le 1 \]
+
+    \hypertarget{algorytm-smo}{%
+\subsubsection{Algorytm SMO}\label{algorytm-smo}}
+
+Algorytm SMO w każdej iteracji pętli wybiera najmniejszy możliwy do
+rozwiązania problem optymalizacyjny - wybiera dwa \(\alpha\) i znajduje
+wartość optymalną dla obu.
+
+\hypertarget{obliczanie-nowych-wartoux15bci-alpha-i-b}{%
+\paragraph{\texorpdfstring{Obliczanie nowych wartości \(\alpha\) i
+\(b\)}{Obliczanie nowych wartości \textbackslash alpha i b}}\label{obliczanie-nowych-wartoux15bci-alpha-i-b}}
+
+Z wybranych \(\alpha_i, \alpha_j\) jako pierwsza będzie ustalana wartość
+dla \(\alpha_j\). Najpierw należy obliczyć w jakich granicach powinna
+mieścić się ta wartość, tak aby warunki \((7)\) były spełnione.
+
+Jeśli \(y_j = y_i\) :
+\[  L = max(0, \alpha_2-\alpha_1), \quad H = min(C, C+ \alpha_2 - \alpha_1)  \tag{9}\]
+
+W przeciwnym wypadku :
+\[  L = max(0, \alpha_2+\alpha_1 - C), \quad H = min(C, C+ \alpha_2 + \alpha_1)  \tag{10}\]
+
+Następnie minimalizujemy funkcję \((6)\) po \(\alpha_i, \alpha_j\):
+
+\[ min _{\alpha_j, \alpha_i} \  \frac{1}{2}K(x_j, x_j)\alpha_j + \frac{1}{2}K(x_i, x_i)\alpha_i + \frac{1}{2}y_j\alpha_j\sum_{k \neq j} y_k\alpha_k K(x_j, x_k) + \frac{1}{2}y_i\alpha_i\sum_{k \neq i} y_k\alpha_k K(x_i, x_k) - \alpha_j - \alpha_j   \tag{11}\]
+
+Otrzymaliśmy równanie kwadratowe dwóch zmiennych postaci
+\[ Ax^2 + By^2 + Cx + Dy + Exy + F \] które ma minimum
+\[ x_m = \frac{DE - 2BC}{\eta}  \tag{12} \] wtedy i tylko wtedy gdy
+\[ 4AB - E^2 = \eta > 0  \tag{13}\]
+
+Jeśli
+\[ \eta = 2K(x_i, x_j) - K(x_j, x_j) - K(x_i, x_i) > 0  \tag{14} \]
+\(\alpha_j\) ustawiane jest według \((12)\) na
+\[\alpha_j += \frac{y_j(E_i - E_j)}{\eta} \tag{15}\], gdzie
+\[ E_i = h(x_i) - y_i \tag{16} \] i ewentualnie przycinane do granic
+ustaloych w \((9)\) lub \((10)\).
+
+Jeśli zaś \(\eta \le 0\) funkcja celu jest ewaluowana w górnym i dolnym
+ograniczeniu i \(\alpha_j\) jest ustawiane na ten koniec przedziału w
+którym ma ona mniejszą wartosć
+
+Po ustawieniu \(\alpha_j\) sprawdzane jest czy poczyniona została
+jakakolwiek znacząca zmiana (większa od pewnej ustalonej tolerancji),
+jeśli tak, to \(\alpha_i\) ustawiane jest na
+\[ \alpha_1 += y_1y_2(\alpha_{2, old} - \alpha_{2, new}) \tag{17}\] w
+celu spełnienia ograniczeń.
+
+Po zmianie wartości \(\alpha\) należy wyliczyć nowe \(b\), tak aby
+warunki KKT były spełnione.
+
+Jeśli \(0 \le \alpha_i \le C\)
+\[ b = b_1 = b - E_i -y^{(i)}(\alpha_{i, new} - \alpha_{i, old}) \langle x^{(i)}, x^{(i)} \rangle -y^{(j)}(\alpha_{j, new} - \alpha_{j, old}) K( x^{(i)}, x^{(j)}) \tag{18}\]
+Jeśli \(0 \le \alpha_j \le C\)
+\[ b= b_2 = b - E_j -y^{(i)}(\alpha_{i, new} - \alpha_{i, old}) K(x^{(i)}, x^{(j)}) -y^{(j)}(\alpha_{j, new} - \alpha_{j, old}) K(x^{(j)}, x^{(j)}) \tag{19} \]
+Jeśli \(0 \le \alpha_j \le C\) i \(0 \le \alpha_i \le C\), wtedy
+\(b_1 = b_2\)
+
+Jeśli zaś oba \(\alpha_i, \alpha_j\) są ograniczone wtedy wszystkie
+\(b\) pomiędzy \(b_1\) i \(b_2\) będą spełniały warunki KKT, więc
+wybieramy \[
+b = \frac{b_1 + b_2}{2} \tag{20}
+\]
+
+\hypertarget{wybuxf3r-alpha-do-optymalizacji}{%
+\paragraph{\texorpdfstring{Wybór \(\alpha\) do
+optymalizacji}{Wybór \textbackslash alpha do optymalizacji}}\label{wybuxf3r-alpha-do-optymalizacji}}
+
+Podczas pracy algorytmu w pamięci przechowywane są zbiory \(\alpha\) -
+nieograniczonych \(( 0 < \alpha_i < C)\) i ograniczonych
+\((\alpha_i = C \lor \alpha_i = 0)\).
+
+\hypertarget{wybuxf3r-pierwszej-wartoux15bci}{%
+\subparagraph{Wybór pierwszej
+wartości}\label{wybuxf3r-pierwszej-wartoux15bci}}
+
+Algorytm na przemian wykonuje następujące kroki dopóki możliwe jest
+wykonanie jakiejkolwiek znaczącej zmiany:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\item
+  Iteruje po wszystkich elementach zbioru treningowego i z podejmuje
+  próbę optymalizacji \(j\)-tego elementu jeśli \(\alpha_j\) narusza
+  warunki KKT.
+\item
+  Iteruje po wszystkich nieograniczonych \(\alpha\) podejmując próby
+  optymalizacji \(j\)-tego elementu jeśli \(\alpha_j\) narusza warunki
+  KKT.
+\end{enumerate}
+
+Algorytm powtarza krok 2) dopóki rezultatem jego jest znacząca zmiana
+chociaż jednej pary \(\alpha\), gdyż to właśnie nieograniczone
+\(\alpha\) mają największe prawdopodobieństwo naruszania warunków KKT.
+Spełnienie warunków KKT jest sprawdzane do pewnej tolerancji.
+
+\hypertarget{wybuxf3r-drugiej-wartoux15bci}{%
+\subparagraph{Wybór drugiej
+wartości}\label{wybuxf3r-drugiej-wartoux15bci}}
+
+Po wybraniu pierwszego \(\alpha\) drugie musi zostać wybrane w taki
+sposób, aby maksymalizować zmianę w funkcji celu. Najpierw podejmowana
+jest próba wyboru \(\alpha_i\) według następującej heurystyki : chcemy
+żeby moduł z licznika z równania \((15)\) był jak największy, więc jeśli
+\(E_j < 0\) wybieramy \(\alpha_i\) o największym błędzie, a gdy
+\(E_j > 0\) wybieramy \(\alpha_i\) o najmniejszym błędzie. Jeśli przy
+użyciu \(\alpha_i\) wybranego na podstawie powyższej heurystyki nie może
+zostać poczyniony postęp, \(\alpha_i\) które umożliwi poczynienie
+postępu szukane jest pośród nieograniczonych \(\alpha\), a w przypadku
+porażki pośród ograniczonych \(\alpha\). Oba wspomniane poszukiwania
+zaczynają się losowym miejscu obu zbiorów.
+
+    \hypertarget{sczeguxf3ux142y-implementacji}{%
+\subsubsection{Sczegóły
+implementacji}\label{sczeguxf3ux142y-implementacji}}
+
+Klasa SMO inicjalizowana jest przy podaniu znormalizowanej do przedziału
+\textless-1, 1\textgreater{} macierzy treningowej i wektora etykiet
+zawierającego wartości \{-1, 1\}, parametru funkcji jądrowej gamma,
+parametru C i opcjonalnej, obliczonej wcześniej macierzy kernel\_matrix,
+takiej, że kernel\_matrix{[}i, j{]} = kernel\_function(x{[}i{]},
+x{[}j{]}, gamma). Przy inicjalizacji klasy ustawiane są następujące
+pola:
+
+wektor zer alpha, b = 0,
+
+eps - tolerancja numeryczna potrzebna do określenia czy dane \(\alpha\)
+uznać za zmienione w danej iteracji,
+
+zbiory bound\_alphas (wszystkie alpha), unbound\_alphas (pusty),
+
+cache błędów - mające przyspieszyć wyznaczanie błędów \(E_i\),
+
+unbound\_err\_cache - zbiór potrzebny do wyznaczania heurystycznie
+wartości potrzebnych w podczas wyboru drugiego \(\alpha\) do
+optymalizacji,
+
+alpha\_metadata - tablica zawierająca dane o każdym z \(\alpha\) - czy
+jest on ograniczony i czy wartość jego błędu jest w cache.
+
+Ze względu na fakt, że zbiór danych na którym ma uczyć się algorytm jest
+relatywnie duży (macierz danych o wymiarach (12000 x 784)) W celu
+przyspiesznia obliczeń podczas poszukiwania optymalnych parametrów do
+algorytmu wprowadzona została możliwość obliczenia wcześniej macierzy
+kernel\_matrix i uniknięcia obliczania relatywnie kosztownej
+obliczeniowo kernel\_function podczas uczenia algorytmu.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+    \PY{k}{def} \PY{n+nf+fm}{\PYZus{}\PYZus{}init\PYZus{}\PYZus{}}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{c}\PY{p}{,} \PY{n}{gamma}\PY{p}{,} \PY{n}{km}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{b} \PY{o}{=} \PY{l+m+mi}{0}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n}{x}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{features} \PY{o}{=} \PY{n}{x}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{labels} \PY{o}{=} \PY{n}{y}\PY{o}{.}\PY{n}{reshape}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{y}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{c} \PY{o}{=} \PY{n}{c}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{gamma} \PY{o}{=} \PY{n}{gamma}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{eps} \PY{o}{=} \PY{l+m+mi}{10}\PY{o}{*}\PY{o}{*}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{3}\PY{p}{)}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{unbound\PYZus{}alphas} \PY{o}{=} \PY{n+nb}{set}\PY{p}{(}\PY{p}{)}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{bound\PYZus{}alphas} \PY{o}{=} \PY{n+nb}{set}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{err\PYZus{}cache} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{unbound\PYZus{}err\PYZus{}cache} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha\PYZus{}metadata} \PY{o}{=} \PY{p}{[}\PY{n}{SMO}\PY{o}{.}\PY{n}{AlphaMetadata}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{\PYZus{}} \PY{o+ow}{in} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha}\PY{p}{]}
+        
+        \PY{k}{if} \PY{n}{km} \PY{o+ow}{is} \PY{k+kc}{None}\PY{p}{:}
+            \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{train\PYZus{}hypothesis} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{no\PYZus{}km\PYZus{}hypothesis}
+        \PY{k}{else}\PY{p}{:}
+            \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{kernel\PYZus{}matrix} \PY{o}{=} \PY{n}{km}
+            \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{train\PYZus{}hypothesis} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{km\PYZus{}hypothesis}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Wybór pierwszej wartości \(\alpha\) do optymalizacji realizowany jest w
+głównej pętli funkcji \textbf{train}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+    \PY{k}{while} \PY{n}{iters} \PY{o}{\PYZlt{}} \PY{n}{max\PYZus{}iters} \PY{o+ow}{and} \PY{p}{(}\PY{n}{changed\PYZus{}alphas} \PY{o}{\PYZgt{}} \PY{l+m+mi}{0} \PY{o+ow}{or} \PY{n}{examine\PYZus{}all}\PY{p}{)}\PY{p}{:}
+                \PY{n}{changed\PYZus{}alphas} \PY{o}{=} \PY{l+m+mi}{0}
+                \PY{k}{if} \PY{n}{examine\PYZus{}all}\PY{p}{:}
+                    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{features}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{:}
+                        \PY{n}{changed\PYZus{}alphas} \PY{o}{+}\PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{examine\PYZus{}example}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{tol}\PY{p}{)}
+                \PY{k}{else}\PY{p}{:}
+                    \PY{n}{set\PYZus{}cpy} \PY{o}{=} \PY{n}{copy}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{unbound\PYZus{}alphas}\PY{p}{)}
+                    \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{set\PYZus{}cpy}\PY{p}{:}
+                        \PY{n}{changed\PYZus{}alphas} \PY{o}{+}\PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{examine\PYZus{}example}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{tol}\PY{p}{)}
+
+                \PY{k}{if} \PY{n}{examine\PYZus{}all}\PY{p}{:}
+                    \PY{n}{examine\PYZus{}all} \PY{o}{=} \PY{k+kc}{False}
+                \PY{k}{elif} \PY{n}{changed\PYZus{}alphas} \PY{o}{==} \PY{l+m+mi}{0}\PY{p}{:}
+                    \PY{n}{examine\PYZus{}all} \PY{o}{=} \PY{k+kc}{True}
+                \PY{n}{iters} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Sprawdzenie czy dane \(\alpha_j\) naursza warunki KKT(z podaną jako
+argument tolerancją) i wybór \(\alpha_i\) realizuje funkcja
+\textbf{examine\_example}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+    \PY{k}{def} \PY{n+nf}{examine\PYZus{}example}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{tol}\PY{p}{)}\PY{p}{:}
+        \PY{n}{E\PYZus{}i} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{get\PYZus{}error}\PY{p}{(}\PY{n}{i}\PY{p}{)}
+        \PY{k}{if} \PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{labels}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{*} \PY{n}{E\PYZus{}i} \PY{o}{\PYZlt{}} \PY{o}{\PYZhy{}}\PY{n}{tol} \PY{o+ow}{and} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZlt{}} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{c}\PY{p}{)} \PY{o+ow}{or} \PYZbs{}
+                \PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{labels}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{*} \PY{n}{E\PYZus{}i} \PY{o}{\PYZgt{}} \PY{n}{tol} \PY{o+ow}{and} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{l+m+mi}{0}\PY{p}{)}\PY{p}{:}
+            \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{unbound\PYZus{}err\PYZus{}cache}\PY{p}{)} \PY{o}{!=} \PY{l+m+mi}{0}\PY{p}{:}
+                \PY{n}{idx} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{choice\PYZus{}cheuristic}\PY{p}{(}\PY{n}{i}\PY{p}{)}
+                \PY{k}{if} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{take\PYZus{}step}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{idx}\PY{p}{)} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{:}
+                    \PY{k}{return} \PY{l+m+mi}{1}
+
+            \PY{n}{tmp\PYZus{}list} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{unbound\PYZus{}alphas}\PY{p}{)}
+            \PY{n}{start} \PY{o}{=} \PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{tmp\PYZus{}list}\PY{p}{)}\PY{p}{)}
+            \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{tmp\PYZus{}list}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                \PY{k}{if} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{take\PYZus{}step}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{tmp\PYZus{}list}\PY{p}{[}\PY{p}{(}\PY{n}{j} \PY{o}{+} \PY{n}{start}\PY{p}{)} \PY{o}{\PYZpc{}} \PY{n+nb}{len}\PY{p}{(}\PY{n}{tmp\PYZus{}list}\PY{p}{)}\PY{p}{]}\PY{p}{)} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{:}
+                    \PY{k}{return} \PY{l+m+mi}{1}
+
+            \PY{n}{tmp\PYZus{}list} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{bound\PYZus{}alphas}\PY{p}{)}
+            \PY{n}{start} \PY{o}{=} \PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{tmp\PYZus{}list}\PY{p}{)}\PY{p}{)}
+            \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{tmp\PYZus{}list}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                \PY{k}{if} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{take\PYZus{}step}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{tmp\PYZus{}list}\PY{p}{[}\PY{p}{(}\PY{n}{j} \PY{o}{+} \PY{n}{start}\PY{p}{)} \PY{o}{\PYZpc{}} \PY{n+nb}{len}\PY{p}{(}\PY{n}{tmp\PYZus{}list}\PY{p}{)}\PY{p}{]}\PY{p}{)} \PY{o}{==} \PY{l+m+mi}{1}\PY{p}{:}
+                    \PY{k}{return} \PY{l+m+mi}{1}
+
+        \PY{k}{return} \PY{l+m+mi}{0}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Próba optymalizacji obu \(\alpha\) podejmowana jest w funkcji
+\textbf{take\_step}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+    \PY{k}{def} \PY{n+nf}{take\PYZus{}step}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)}\PY{p}{:}
+        \PY{k}{if} \PY{n}{i} \PY{o}{==} \PY{n}{j}\PY{p}{:}
+            \PY{k}{return} \PY{l+m+mi}{0}
+        \PY{n}{l}\PY{p}{,} \PY{n}{h} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{calculate\PYZus{}constrains}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{)}
+        \PY{k}{if} \PY{n}{l} \PY{o}{==} \PY{n}{h}\PY{p}{:}
+            \PY{k}{return} \PY{l+m+mi}{0}
+        \PY{n}{old\PYZus{}a\PYZus{}i} \PY{o}{=} \PY{n}{copy}\PY{o}{.}\PY{n}{deepcopy}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}
+        \PY{n}{old\PYZus{}a\PYZus{}j} \PY{o}{=} \PY{n}{copy}\PY{o}{.}\PY{n}{deepcopy}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{)}
+
+        \PY{n}{k\PYZus{}ii} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{kernel\PYZus{}function}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{features}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{features}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{gamma}\PY{p}{)}
+        \PY{n}{k\PYZus{}jj} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{kernel\PYZus{}function}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{features}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{features}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{gamma}\PY{p}{)}
+        \PY{n}{k\PYZus{}ij} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{kernel\PYZus{}function}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{features}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{features}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{gamma}\PY{p}{)}
+
+        \PY{n}{eta} \PY{o}{=} \PY{l+m+mi}{2}\PY{o}{*}\PY{n}{k\PYZus{}ij} \PY{o}{\PYZhy{}} \PY{n}{k\PYZus{}ii} \PY{o}{\PYZhy{}} \PY{n}{k\PYZus{}jj}
+
+        \PY{k}{if} \PY{n}{eta} \PY{o}{\PYZlt{}} \PY{l+m+mi}{0}\PY{p}{:}
+            \PY{n}{new\PYZus{}a\PYZus{}j} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{update\PYZus{}alpha\PYZus{}j}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{,} \PY{n}{eta}\PY{p}{)}
+        \PY{k}{else}\PY{p}{:}
+            \PY{n}{Lobj}\PY{p}{,} \PY{n}{Hobj} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{objective\PYZus{}function\PYZus{}at\PYZus{}bounds}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{,} \PY{n}{k\PYZus{}ii}\PY{p}{,} \PY{n}{k\PYZus{}jj}\PY{p}{,} \PY{n}{k\PYZus{}ij}\PY{p}{,} \PY{n}{l}\PY{p}{,} \PY{n}{h}\PY{p}{)}
+            \PY{k}{if} \PY{n}{Lobj} \PY{o}{\PYZlt{}} \PY{n}{Hobj} \PY{o}{\PYZhy{}} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{eps}\PY{p}{:}
+                \PY{n}{new\PYZus{}a\PYZus{}j} \PY{o}{=} \PY{n}{l}
+            \PY{k}{elif} \PY{n}{Lobj} \PY{o}{\PYZgt{}} \PY{n}{Hobj} \PY{o}{+} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{eps}\PY{p}{:}
+                \PY{n}{new\PYZus{}a\PYZus{}j} \PY{o}{=} \PY{n}{h}
+            \PY{k}{else}\PY{p}{:}
+                \PY{n}{new\PYZus{}a\PYZus{}j} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha}\PY{p}{[}\PY{n}{j}\PY{p}{]}
+
+        \PY{k}{if} \PY{n+nb}{abs}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha}\PY{p}{[}\PY{n}{j}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{new\PYZus{}a\PYZus{}j}\PY{p}{)} \PY{o}{\PYZlt{}} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{eps}\PY{p}{:}
+            \PY{k}{return} \PY{l+m+mi}{0}
+
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha}\PY{p}{[}\PY{n}{j}\PY{p}{]} \PY{o}{=} \PY{n}{new\PYZus{}a\PYZus{}j}
+
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{check\PYZus{}idx\PYZus{}bounds}\PY{p}{(}\PY{n}{j}\PY{p}{)}
+
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{+}\PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{labels}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{*} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{labels}\PY{p}{[}\PY{n}{j}\PY{p}{]} \PY{o}{*} \PY{p}{(}\PY{n}{old\PYZus{}a\PYZus{}j} \PY{o}{\PYZhy{}} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{alpha}\PY{p}{[}\PY{n}{j}\PY{p}{]}\PY{p}{)}
+
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{check\PYZus{}idx\PYZus{}bounds}\PY{p}{(}\PY{n}{i}\PY{p}{)}
+
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{calculate\PYZus{}b}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{j}\PY{p}{,} \PY{n}{old\PYZus{}a\PYZus{}i}\PY{p}{,} \PY{n}{old\PYZus{}a\PYZus{}j}\PY{p}{)}
+        \PY{k}{return} \PY{l+m+mi}{1}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Używana powyżej funkcja \textbf{check\_idx\_bounds} usuwa z cache błędy
+zmienionych \(\alpha\), pilnuje poprawności zbiorów bound\_alphas i
+unbound\_alphas oraz tablicy alpha\_metadata. Funkcja
+\textbf{update\_alpha\_j} realizuje obliczenia \((15)\),
+\textbf{calculate\_constrains} obliczenia \((9), (1)\), a
+\textbf{self.calculate\_b} obliczenia \((18) - (20)\)
+
+    \hypertarget{svm-rozpoznajux105cy-wiele-klas}{%
+\subsubsection{SVM rozpoznający wiele
+klas}\label{svm-rozpoznajux105cy-wiele-klas}}
+
+Klasyfikacja wielu klas odbywa się według podejścia one-vs-rest,
+tworzona jest oddzielna instancja SVM dla każdej z klas, jako dane dla
+każdej z nich przekazywana jest pewna część zestawu danych zawierająca
+wszystkie elementy z etykietą oznaczającą klasę jaka ma być rozpoznawana
+przez dany SVM oraz taką samą liczbę losowo wybranych elementów z
+etykietą nie zawierającą tej klasy. Podejście takie zostało wybrane
+poprzez nie korzystne skalowanie się algorytmu do dużych danych
+wejściowych i pozwala ono na znaczne przyspieszenie uczenia niewielkim
+kosztem.
+
+    \hypertarget{parametry}{%
+\subsubsection{Parametry}\label{parametry}}
+
+Parametry jakie należy podać do algorytmu są to : parametr gamma funkcji
+jądrowej, parametr regularyzacji C oraz tolerancja odnośnie spełnienia
+warunków KKT. Optymalny zestaw parametrów został wybrany w sposób
+eksperymentalny poprzez testowanie wyników działania algorytmu dla
+różnych zestawów parametrów. Testowane zestawy parametrów obejmowały
+\(C\) \(\in\) \{10, 5, 1, 0.1, 0.05, 0.01\} i \(\gamma\) \(\in\) \{10,
+100, 1000, 5000, 10000\} dla tolerancji \(tol\) \(\in\) \{0.01, 0.005,
+0.001\}. Można zaobserowować zależność, że algorytm osiąga największą
+dokładność dla parametrów \(\gamma\) i \(C\) pozostających w stosunku
+około \(\frac{C}{\gamma} = \frac{1}{100}\) i osiąga największą
+dokładność dla \(\gamma = 100\) i \(C = 1\). Można również zauważyć, że
+czas działania (ilość iteracji) jest odwrotnie proporcjonalny do
+tolerancji, aczkolwiek podczas testów ustawiona była tolerancja
+\(tol = 0.005\) w celu utrzymania akceptowalnego czasu obliczeń.
+
+Dla każdego z SVM (dla każdej z cyfr) zostały użyte te same parametry.
+
+\hypertarget{wyniki-dziaux142ania}{%
+\subsubsection{Wyniki Działania}\label{wyniki-dziaux142ania}}
+
+\hypertarget{najlepsze-dopasowane-parametry}{%
+\paragraph{Najlepsze dopasowane
+parametry}\label{najlepsze-dopasowane-parametry}}
+
+Dla parametrów \(C = 1.0, \quad \gamma = 100.0\) \textbf{\emph{algorytm
+poprawnie sklasyfikował 98.7\% obrazów}} z zestawu testowego. Przy czym
+każdy z SVM poprawnie sklasyfikował 96-99\% danych treningowych.
+
+Wizualizacje macierzy \(\alpha \cdot X\)
+
+\\
+
+\minipage{0.32\textwidth}
+
+\includegraphics[width=\linewidth]{zero_svm_opt.png} \endminipage\hfill
+\minipage{0.32\textwidth}
+\includegraphics[width=\linewidth]{one_svm_opt.png} \endminipage\hfill
+\minipage{0.32\textwidth}\
+\includegraphics[width=\linewidth]{two_svm_opt.png} \endminipage
+
+\minipage{0.32\textwidth}
+
+\includegraphics[width=\linewidth]{three_svm_opt.png} \endminipage\hfill
+\minipage{0.32\textwidth}
+\includegraphics[width=\linewidth]{seven_svm_opt.png} \endminipage\hfill
+\minipage{0.32\textwidth}\
+\includegraphics[width=\linewidth]{eight_svm_opt.png} \endminipage
+
+\\
+
+\hypertarget{poruxf3wnanie-z-wynikami-dla-parametruxf3w-mniej-optymalnych}{%
+\paragraph{Porównanie z wynikami dla parametrów mniej
+optymalnych}\label{poruxf3wnanie-z-wynikami-dla-parametruxf3w-mniej-optymalnych}}
+
+Dla porównania wynik dla mniej optymalnych parametrów
+\(C = 5.0, \quad \gamma = 100.0\) wynosił 32.22\%. Przy czym każdy z SVM
+poprawnie sklasyfikował 53-91\% danych treningowych.
+\clearpage
+Wizualizacje macierzy \(\alpha \cdot X\)
+
+\\
+
+\minipage{0.32\textwidth}
+
+\includegraphics[width=\linewidth]{zero_svm_subopt.png}
+\endminipage\hfill \minipage{0.32\textwidth}
+\includegraphics[width=\linewidth]{one_svm_subopt.png}
+\endminipage\hfill \minipage{0.32\textwidth}\
+\includegraphics[width=\linewidth]{two_svm_subopt.png} \endminipage
+
+\minipage{0.32\textwidth}
+
+\includegraphics[width=\linewidth]{three_svm_subopt.png}
+\endminipage\hfill \minipage{0.32\textwidth}
+\includegraphics[width=\linewidth]{seven_svm_subopt.png}
+\endminipage\hfill \minipage{0.32\textwidth}\
+\includegraphics[width=\linewidth]{eight_svm_subopt.png} \endminipage
+\\
+
+    \hypertarget{ux17aruxf3dux142a}{%
+\subsubsection{Źródła}\label{ux17aruxf3dux142a}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Burges, C. J. C., ``A Tutorial on Support Vector Machines for Pattern
+  Recognition''
+  (https://www.di.ens.fr/\textasciitilde mallat/papiers/svmtutorial.pdf)
+\item
+  Platt, J.C. ``Sequential Minimal Optimization: A Fast Algorithm for
+  Training Support Vector Machines''
+  (https://web.iitd.ac.in/\textasciitilde sumeet/tr-98-14.pdf)
+\end{enumerate}
+\clearpage
+    \hypertarget{softmax-regression}{%
+\subsection{Softmax Regression}\label{softmax-regression}}
+
+\hypertarget{opis-algorytmu}{%
+\subsubsection{Opis algorytmu}\label{opis-algorytmu}}
+
+Softmax regression jest algorytmem będącym generalizacją regresji
+logistycznej (może być też interpretowany jako sieć neuronowa bez warstw
+ukrytych ze znormalizowanymi aktywacjami). Uczenie odbywa się poprzez
+gradientową minimalizację funkcji kosztu
+\[ J(\Theta) = - \sum^m_{i=1} \sum^K_{k=1} 1\{y^{(i)} = k\} log \frac{exp(\Theta^{(k)T}x^{(i)})}{\sum^K_{j=1}exp(\Theta^{(j)T}x^{(i)})} + \lambda ||\Theta||^2 \],
+gdzie \(\Theta\) jest wektorem parametrów o wymiarach (n+1, k), gdzie n
+jest liczbą cech wektora wejściowego, a k liczbą klas i \(\Theta^{(k)}\)
+oznacza wektor \(\Theta\) dla \(k\)-tej klasy, a \(\lambda\) jest
+parametrem określającym regularyzację.
+
+Funkcja decyzyjna \(h(x)\) zwraca wektor, którego \(i\)-ty element jest
+prawdopodobieństwem, że \(x\) należy do klasy \(i\)
+\[ h(x) = \frac{1}{\sum^K_{j=1}exp(\Theta^{(j)T}x)} \cdot \begin{bmatrix} exp(\Theta^{(1)T}x)  \\  \vdots \\  exp(\Theta^{(K)T}x) \end{bmatrix} \]
+
+A predykcja może być dokonywana jako wybranie największego elementu
+wektora zwróconego przez \(h(x)\)
+
+\hypertarget{uczenie}{%
+\subsubsection{Uczenie}\label{uczenie}}
+
+Uczenie algorytmu odbywa się metodą gradientową poprzez odejmowanie od
+\(\Theta\) wektora pochodnych cząstkowych po funkcji kosztu, przesuwając
+się w stronę minimum globalnego funkcji kosztu. Odbywa się to partiami
+(mini batch gradient descent). Krok pętli uczącej można zapisać jako:
+\[ \Theta -= \frac{\alpha}{B} \cdot \nabla_{\Theta}J(\Theta) \] gdzie
+\(\alpha\) jest wpółczynnikiem uczenia, a \(B\) jest rozmiarem
+``partii'' danych (batch), \(\nabla_{\Theta}J(\Theta)\) jest wektorem
+pochodnych cząstkowych i dla danego \(x\) wynosi :
+\[ \nabla_{\Theta}J(\Theta) = x^T \cdot (h(x) - y) + \lambda \Theta \]
+\clearpage
+\hypertarget{szczeguxf3ux142y-implementacji}{%
+\subsubsection{Szczegóły
+implementacji}\label{szczeguxf3ux142y-implementacji}}
+
+Wszystkie obliczenia wykonywane są na wetkorach, więc implementacja mini
+batch gradient descent wygląda następująco:
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+ \PY{k}{for} \PY{n}{c} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{iters}\PY{p}{)}\PY{p}{:}
+            \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{y}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{:}
+                \PY{k}{if} \PY{n}{i} \PY{o}{+} \PY{n}{batch\PYZus{}size} \PY{o}{\PYZlt{}} \PY{n}{y}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{:}
+                    \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{train\PYZus{}batch}\PY{p}{(}\PY{n}{x}\PY{p}{[}\PY{n}{i}\PY{p}{:}\PY{n}{i}\PY{o}{+}\PY{n}{batch\PYZus{}size}\PY{p}{,} \PY{p}{:}\PY{p}{]}\PY{p}{,} \PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{:}\PY{n}{i}\PY{o}{+}\PY{n}{batch\PYZus{}size}\PY{p}{,} \PY{p}{:}\PY{p}{]}\PY{p}{,}
+                                     \PY{n}{learning\PYZus{}rate}\PY{p}{,} \PY{n}{reg\PYZus{}param}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{p}{)}
+                \PY{k}{else}\PY{p}{:}
+                    \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{train\PYZus{}batch}\PY{p}{(}\PY{n}{x}\PY{p}{[}\PY{n}{i}\PY{p}{:}\PY{p}{,} \PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{reshape}\PY{p}{(}\PY{n}{y}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{i}\PY{p}{,} \PY{n}{x}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+                                     \PY{n}{y}\PY{p}{[}\PY{n}{i}\PY{p}{:}\PY{p}{,} \PY{p}{:}\PY{p}{]}\PY{o}{.}\PY{n}{reshape}\PY{p}{(}\PY{n}{y}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{i}\PY{p}{,}  \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{k}\PY{p}{)}\PY{p}{,}
+                                     \PY{n}{learning\PYZus{}rate}\PY{p}{,} \PY{n}{reg\PYZus{}param}\PY{p}{,} \PY{n}{y}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{i}\PY{p}{)}
+                
+\PY{k}{def} \PY{n+nf}{train\PYZus{}batch}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{learning\PYZus{}rate}\PY{p}{,} \PY{n}{reg\PYZus{}param}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{Theta} \PY{o}{\PYZhy{}}\PY{o}{=} \PY{n}{learning\PYZus{}rate} \PY{o}{*} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{gradient}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{c\PYZus{}}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{ones}\PY{p}{(}\PY{n}{x}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{x}\PY{p}{]}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{reg\PYZus{}param}\PY{p}{)} \PY{o}{/} \PY{n}{y}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Do każdego wywołania funkcji \textbf{gradient} czy funkcji decyzyjnej
+przekazywana jest macierz \(x\), do której należy dodać wektor jedynek,
+w celu umożliwienia algorytmowi wprowadzenia bias term do obliczeń.
+Macierz \(\Theta\) jest inicjalizowana uwzględniając bias term na
+rozmiar (n+1, k)
+
+    \hypertarget{parametry}{%
+\subsubsection{Parametry}\label{parametry}}
+
+Parametry jakie należy podać do algorytmu są to : parametr określający
+szybkość uczenia alpha oraz parametr określający poziom regularyzacji.
+Prędkość zbiegania się algorytmu do optymalnego rozwiązania jest
+uzależniona od parametru \(\alpha\) - jeśli jest on zbyt mały czas
+działania algorytmu będzie niepotrzebnie wydłużony, zaś jeśli jest on
+zbyt duży algorytm może nie osiągnąć w ogóle rozwiązania optymalnego.
+Parametr \(\lambda\) określa jak dobrze algorytm generalizuje w
+porównaniu do przykładów na których się uczył, dla zbyt dużego
+\(\lambda\) widoczne będzie zjawisko underfitingu, zaś dla zbyt małego
+overfitingu.
+\clearpage
+\hypertarget{wyniki-dziaux142ania}{%
+\subsubsection{Wyniki Działania}\label{wyniki-dziaux142ania}}
+
+\hypertarget{najlepsze-dopasowane-parametry}{%
+\paragraph{Najlepsze dopasowane
+parametry}\label{najlepsze-dopasowane-parametry}}
+
+Dla parametrów \(\alpha = 0.001, \quad \lambda = 0.001\)
+\textbf{\emph{algorytm poprawnie sklasyfikował 91.51\% obrazów}} z
+zestawu testowego.
+
+Wizualizacje parametrów \(\theta\) algorytrmu
+
+\minipage{0.32\textwidth}
+
+\includegraphics[width=\linewidth]{zero_softmax.png} \endminipage\hfill
+\minipage{0.32\textwidth}
+\includegraphics[width=\linewidth]{one_softmax.png} \endminipage\hfill
+\minipage{0.32\textwidth}\
+\includegraphics[width=\linewidth]{two_softmax.png} \endminipage
+
+    \hypertarget{neural-network}{%
+\subsection{Neural Network}\label{neural-network}}
+
+\hypertarget{opis-algorytmu}{%
+\subsubsection{Opis algorytmu}\label{opis-algorytmu}}
+
+W opisywanej sieci neuronowej wszystkie warstwy są w pełni połączone, a
+aktywacjami neuronów w poszczególnych warstwach mogą być funkcje
+\[ sigmoid(x) = \frac{1}{1 + exp(-x)} \] \[ ReLU(x) = max{0, x} \]
+
+Celem optymalizacji jest minimalizacja funkcji kosztu
+\[ J(w, b) = \frac{1}{m} \sum^m_{i=1} \sum^K_{k=1} [-y_k^{(i)} log (h(x^{(i)})_k) - (1 - y^{(i)}_k) log (1 - (h(x^{(i)})_k))] + \frac{\lambda}{2}\sum^D_{d=1} \sum^{a_{d}}_l \sum^{b_{d}}_k (w^{[d]}_{lk})^2 \],
+gdzie \$ h(x) \$ są aktywacjami ostatniej warstwy neuronów, \(D\) jest
+liczbą warstw, a \(a_d, b_d\) są rozmiarami macierzy wag dla warstwy
+\(d\), \(\lambda\) jest parametrem regularyzacji
+
+Aktywacje ostatniej warstwy (\(h(x)\)) obliczane są poprzez algorytm
+propagacji w przód, a predykcja może być dokonywana jako wybranie
+największego elementu wektora (\(h(x)\)), uczenie sieci odbywa się przy
+użyciu algorytmu propagacji w tył.
+
+\hypertarget{propagacja-w-przuxf3d}{%
+\subsubsection{Propagacja w przód}\label{propagacja-w-przuxf3d}}
+
+Algorytm propagacji w przód zaczyna swoją pracę na danych wejściowych do
+sieci i oblicza wartości aktywacji w kolejnych warstwach. Poszukujemy
+wartości \(z, a\) dla każdej z warstw.
+\[z_i = w_i a_{i-1} + b_i, \quad a_i = activation_i(z_i)\], gdzie
+\(w_i\) jest macierzą wag w \(i\)-tej warstwy, \(a_i\) jest wektorem
+aktywacji w danej warstwie. Zakładamy, że \(a_0 = x\)
+
+\hypertarget{propagacja-w-tyux142}{%
+\subsubsection{Propagacja w tył}\label{propagacja-w-tyux142}}
+
+Celem propagacji w tył jest wyznaczanie
+\(\frac{\partial J}{\partial w^{[k]}}\) i
+\(\frac{\partial J}{\partial b^{[k]}}\) dla każdej z warstw, żeby w
+sposób gradientowy aktualizować wagi. Obliczenia należy zacząć od
+warstwy ostatniej i korzystając z reguły łańcuchowej pochodnych posuwać
+się w tył do osiągnięcia pierwszej warstwy.
+\[ \frac{\partial J}{\partial w^{[k]}} = \frac{\partial J}{\partial z^{[k]}} a^{[k-1]^T}, \quad \frac{\partial J}{\partial b^{[k]}} = \frac{\partial J}{\partial z^{[k]}} \]
+
+Przyjmując oznaczenie
+\(\delta^{[k]} = \frac{\partial J}{\partial z^{[k]}}\) i \(r\) jako
+liczbę warstw
+
+\[\delta^{[r]} =  \frac{\partial J}{\partial z^{[r]}} = a^{[r]} - y\]
+\[ \forall_{k < r} \ \delta^{[k]} = (w^{[k+1]^T} \delta^{[k+1]}) \odot {activation_k}'(z^{[k]}) \]
+
+gdzie \({activation_k}'\) jest pochodną funkcji aktywacji w \(k\)-tej
+warstwie, a \$ \odot\$ oznacza mnożenie po elementach
+
+Można więc podać regułę aktualizacji dla \(w, b\) jako
+\[ w_k \ -= \frac{\alpha}{B} \delta^{[k]}a^{[k-1]^T} + \lambda w_k, \quad b_k \ -= \frac{\alpha}{B}\delta^{[k]} \]
+gdzie \(\alpha\) jest wpółczynnikiem uczenia, a \(B\) jest rozmiarem
+``partii'' danych (batch)
+
+\hypertarget{szczeguxf3ux142y-implementacji}{%
+\subsubsection{Szczegóły
+implementacji}\label{szczeguxf3ux142y-implementacji}}
+
+Poczas inicjalizacji klasy NeuralNet należy podać liczbę neuronów
+wejściowych, wyjściowych, architekturę warstw ukrytych oraz funkcje
+aktywacji na poszczególnych warstwach, włączając ostatnią. Wagi
+inicjalizowane są jako wartości losowe z dystrybucji normalnej o
+wartości średniej równej 0 i wariancji równej \(\frac{1}{\sqrt{d}}\),
+gdzie \(d\) jest wielkością warstwy poprzedniej
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+   \PY{k}{def} \PY{n+nf}{initialize\PYZus{}weights}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{input\PYZus{}size}\PY{p}{,} \PY{n}{layers\PYZus{}layout}\PY{p}{)}\PY{p}{:}
+        \PY{n}{prev\PYZus{}layer\PYZus{}size} \PY{o}{=} \PY{n}{input\PYZus{}size}
+        \PY{k}{for} \PY{n}{layer\PYZus{}size} \PY{o+ow}{in} \PY{n}{layers\PYZus{}layout}\PY{p}{:}
+            \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{weights}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randn}\PY{p}{(}\PY{n}{prev\PYZus{}layer\PYZus{}size}\PY{p}{,} \PY{n}{layer\PYZus{}size}\PY{p}{)} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{l+m+mi}{1}\PY{o}{/}\PY{n}{prev\PYZus{}layer\PYZus{}size}\PY{p}{)}\PY{p}{)}
+            \PY{n}{prev\PYZus{}layer\PYZus{}size} \PY{o}{=} \PY{n}{layer\PYZus{}size}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Ze względu na wektoryzację kodu propagacji w tył i przód możliwa jest
+implementacja uczenia przy użyciu mini batch gradient descent przy
+użyciu tej samej pętli głównej co SoftmaxRegression, z różnicą w funkcji
+\textbf{train batch}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+  \PY{k}{def} \PY{n+nf}{train\PYZus{}batch}\PY{p}{(}\PY{n+nb+bp}{self}\PY{p}{,} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{learning\PYZus{}rate}\PY{p}{,} \PY{n}{reg\PYZus{}param}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{forward\PYZus{}prop}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} backpropagation algorithm}
+        \PY{n}{deltas} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{0} \PY{k}{for} \PY{n}{\PYZus{}} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{layers\PYZus{}count}\PY{p}{)}\PY{p}{]}
+        \PY{n}{deltas}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{=} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{activations}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{y}
+        \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{layers\PYZus{}count} \PY{o}{\PYZhy{}} \PY{l+m+mi}{2}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{:}
+            \PY{n}{deltas}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{weights}\PY{p}{[}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{n}{deltas}\PY{p}{[}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{)}
+            \PY{n}{deltas}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{multiply}\PY{p}{(}\PY{n}{deltas}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{activation\PYZus{}derivative}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{i}\PY{p}{)}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{}                                                    l2 regularization}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{weights}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{\PYZhy{}}\PY{o}{=} \PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{deltas}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)} \PY{o}{+} \PY{n}{reg\PYZus{}param} \PY{o}{*} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{weights}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{*} \PY{n}{batch\PYZus{}size}\PY{p}{)}\PYZbs{}
+                           \PY{o}{*} \PY{n}{learning\PYZus{}rate}\PY{o}{/}\PY{n}{batch\PYZus{}size}
+        \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{biases}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{\PYZhy{}}\PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{deltas}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{o}{.}\PY{n}{reshape}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{biases}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{shape}\PY{p}{)} \PY{o}{*} \PY{n}{learning\PYZus{}rate}\PY{o}{/}\PY{n}{batch\PYZus{}size}
+        \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{layers\PYZus{}count}\PY{p}{)}\PY{p}{:}
+            \PY{c+c1}{\PYZsh{}                                                        l2 regularization}
+            \PY{n}{dw} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{transpose}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{activations}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{dot}\PY{p}{(}\PY{n}{deltas}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)} \PY{o}{+} \PY{n}{reg\PYZus{}param} \PY{o}{*} \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{weights}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{*} \PY{n}{batch\PYZus{}size}
+            \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{weights}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZhy{}}\PY{o}{=} \PY{n}{dw} \PY{o}{*} \PY{n}{learning\PYZus{}rate}\PY{o}{/}\PY{n}{batch\PYZus{}size}
+            \PY{n}{db} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{deltas}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{o}{.}\PY{n}{reshape}\PY{p}{(}\PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{biases}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+            \PY{n+nb+bp}{self}\PY{o}{.}\PY{n}{biases}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZhy{}}\PY{o}{=} \PY{n}{db} \PY{o}{*} \PY{n}{learning\PYZus{}rate}\PY{o}{/}\PY{n}{batch\PYZus{}size}
+\end{Verbatim}
+\end{tcolorbox}
+
+    Funkcja \textbf{forward\_prop} realizuje propagację w przód macierzy x
+
+    \hypertarget{parametry}{%
+\subsubsection{Parametry}\label{parametry}}
+
+Parametry jakie należy podać do algorytmu są to : architektura warstw
+ukrytych oraz parametr regularyzacji lambda. Parametr \(\lambda\)
+określa jak dobrze algorytm generalizuje w porównaniu do przykładów na
+których się uczył, dla zbyt dużego \(\lambda\) widoczne będzie zjawisko
+underfitingu, zaś dla zbyt małego overfitingu.
+
+Dobór architektury sieci dokonywany jest w sposób eksperymentalny,
+aczkolwiek można zauważyć pewne zależności:
+
+\begin{itemize}
+\tightlist
+\item
+  wraz z liczbą warstw wydłuża się czas uczenia, co nie koniecznie jest
+  skorelowane z lepszymi wynikami,
+\item
+  rozmiary kolejnych warstw powinny maleć - tj. pierwsza warstwa ukryta
+  powinna mieć najwięcej neuronów (acz maksymalnie w okolicy rozmiaru
+  warstwy wejściowej) a ostania najmniej (acz nie mniej niż warstwa
+  wyjściowa),
+\item
+  warstwy mogą również mieć ten sam rozmiar, ale użycie wielu takich
+  samych warstw o rozmiarze mniejszym niż dane wejściowe prowadzi do
+  gorszych wyników niż jedna warstwa.
+\item
+  aktywacja ReLU spisuje się lepiej w sieci wielowarstwowej, zaś sigmoid
+  przy mniejszej liczbie warstw
+\end{itemize}
+\clearpage
+\hypertarget{wyniki-dziaux142ania}{%
+\subsubsection{Wyniki Działania}\label{wyniki-dziaux142ania}}
+
+\hypertarget{najlepsze-dopasowane-parametry}{%
+\paragraph{Najlepsze dopasowane
+parametry}\label{najlepsze-dopasowane-parametry}}
+
+Dla \(\lambda = 0.001\) i  4 warstw ukrytych po 800, 400, 200, 50 neuronów z aktywacjami ReLU. \textbf{\emph{Algorytm poprawnie sklasyfikował 95.4\%
+obrazów}} z zestawu testowego.
+
+\hypertarget{przykux142adowa-wizualizacja}{%
+\paragraph{Przykładowa
+wizualizacja}\label{przykux142adowa-wizualizacja}}
+
+Próbując interpretować wyniki działania sieci neuronowej można spróbować
+wizualizować jaką wartość zależną od wag mają poszczególne pixele
+wejściowe w neuronach kolejnych warstw, co może być zrealizowane przez
+mnożenie kolejnych macierzy wag. Poniższe wizualizacje dotyczą sieci z
+jedną, 20 neuronową warstwą ukrytą osiągająca 91.2 \% poprawnie
+sklasyfikowanych przypadków spośród danych testowych
+
+Warstwa ukryta
+
+\\
+
+\minipage{0.32\textwidth}
+
+\includegraphics[width=\linewidth]{nn_hidden_a.png} \endminipage\hfill
+\minipage{0.32\textwidth}
+\includegraphics[width=\linewidth]{nn_hidden_b.png} \endminipage\hfill
+\minipage{0.32\textwidth}\%
+\includegraphics[width=\linewidth]{nn_hidden_c.png} \endminipage
+
+\minipage{0.32\textwidth}
+
+\includegraphics[width=\linewidth]{nn_hidden_d.png} \endminipage\hfill
+\minipage{0.32\textwidth}
+\includegraphics[width=\linewidth]{nn_hidden_e.png} \endminipage\hfill
+\minipage{0.32\textwidth}\%
+\includegraphics[width=\linewidth]{nn_hidden_f.png} \endminipage
+
+\\
+
+Warstwa wyjściowa
+
+\\
+
+\minipage{0.32\textwidth}
+
+\includegraphics[width=\linewidth]{nn_out_a.png} \endminipage\hfill
+\minipage{0.32\textwidth}
+\includegraphics[width=\linewidth]{nn_out_b.png} \endminipage\hfill
+\minipage{0.32\textwidth}\%
+\includegraphics[width=\linewidth]{nn_out_c.png} \endminipage
+
+\\
+\clearpage
+    \hypertarget{podsumowanie}{%
+\section{Podsumowanie}\label{podsumowanie}}
+
+\begin{itemize}
+\item
+  SVM jest algorytmem relatywnie trudnym w implementacji, źle skalującym
+  się, aczkolwiek jego wyniki są interpretowalne, posiada mało
+  parametrów które należy dostosować i osiąga bardzo dobre wyniki
+  klasyfikacji (przy odpowiednio niskiej tolerancji i przy operowaniu na
+  całym zbiorze danych prawdopodobnie osiągnąłby lepszy wynik niż podany
+  wyżej w opracowaniu)
+\item
+  Regresja softmax jest prostym w implementacji, szybkim i łatwo
+  interpretowalnym algorytmem nie osiągającym wyników porównywalnych do
+  pozostałych dwóch
+\item
+  Sieć neuronowa jest algorytmem wymagającym włożenia dużej ilości pracy
+  w zaprojektowanie odpowiedniej architektury, a jego wyniki są ciężkie
+  w interpretacji. Z drugiej strony osiągając bardzo dobre wyniki
+  klasyfikacji, działa w rozsądnym czasie i relatywnie dobrze się
+  skaluje (przy odpowiedniej architekturze prawdopodobnie algorytm
+  osiągnąłby lepsze wyniki niż podane wyżej w opracowaniu)
+\end{itemize}
+
+Algorytm regresji softmax najszybciej znajduje rozwiązanie problemu,
+sieć neuronowa w różnym, zależnym od architektury, tempie, aczkolwiek
+zawsze wolniej niż regresja softmax. Czas działania obu tych algorytmów
+liczony jest w minutach SVM zaś w godzinach ze względu na słabe
+skalowanie do dużych zbiorów danych.
+
+Podsumowując, można więc powiedzieć, że algorytmy SVM i sieci neuronowej
+znacznie przewyższają regresję softmax w zadaniu klasyfikacji,
+aczkolwiek są też od niej znacznie bardziej skomplikowane. Wyniki
+osiągnięte przez sieć neuronową i SVM są ciężkie do porównania, gdyż
+prawdopodobnie nie został włożony wystarczający wysiłek w
+zaprojektowanie architektury sieci. Można jednak stwierdzić, że algorytm
+sieci neuronowej działa znacznie szybciej od SVM, lepiej się skaluje i
+jest prostszy w implementacji kosztem skomplikowania w dobrze
+parametrów.
+
+      
+\end{document}
